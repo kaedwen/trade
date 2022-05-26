@@ -338,11 +338,10 @@ func RefreshToken() {
 	}
 }
 
-func SetupRefreshToken(rate time.Duration) {
-	startTime := time.Now().Add(5 * time.Minute)
+func SetupRefreshToken(rate time.Duration, delay time.Duration) {
 	task, err := taskScheduler.ScheduleAtFixedRate(func(ctx context.Context) {
 		RefreshToken()
-	}, rate, chrono.WithTime(startTime))
+	}, rate, chrono.WithTime(time.Now().Add(delay)))
 	base.FatalIfError(err)
 
 	refreshTokenTask = &task

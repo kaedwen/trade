@@ -19,16 +19,12 @@ func setupInflux() {
 }
 
 func RunInflux(dataChannel chan Data) {
-	for {
-		select {
-		case data := <-dataChannel:
-			log.Info().Msgf("%+v", data)
-			writeAPI.WritePoint(context.Background(), influxdb2.NewPoint(data.Name,
-				data.Tags,
-				data.Fields,
-				time.Now()))
-		case <-dataChannel:
-			return
-		}
+	for data := range dataChannel {
+		err := writeAPI.WritePoint(context.Background(), influxdb2.NewPoint(data.Name,
+			data.Tags,
+			data.Fields,
+			time.Now()))
+		FatalIfError(err)
 	}
+	log.Error().Msg("For some reason RunInflux will die!")
 }

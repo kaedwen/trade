@@ -12,7 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var taskScheduler = chrono.NewDefaultTaskScheduler()
 var checkAccountTask *chrono.ScheduledTask
 
 type AccountBalanceResponse struct {
@@ -33,24 +32,24 @@ type AccountBalanceResponse struct {
 				Text string `json:"text"`
 			} `json:"accountType"`
 			CreditLimit struct {
-				Value float64 `json:"value"`
+				Value float64 `json:"value,string"`
 				Unit  string  `json:"unit"`
 			} `json:"creditLimit"`
 		} `json:"account"`
 		Balance struct {
-			Value float64 `json:"value"`
+			Value float64 `json:"value,string"`
 			Unit  string  `json:"unit"`
 		} `json:"balance"`
 		BalanceEUR struct {
-			Value float64 `json:"value"`
+			Value float64 `json:"value,string"`
 			Unit  string  `json:"unit"`
 		} `json:"balanceEUR"`
 		AvailableCashAmount struct {
-			Value float64 `json:"value"`
+			Value float64 `json:"value,string"`
 			Unit  string  `json:"unit"`
 		} `json:"availableCashAmount"`
 		AvailableCashAmountEUR struct {
-			Value float64 `json:"value"`
+			Value float64 `json:"value,string"`
 			Unit  string  `json:"unit"`
 		} `json:"availableCashAmountEUR"`
 	} `json:"values"`
@@ -102,10 +101,10 @@ func checkAccount(dataChannel chan base.Data) {
 	}
 }
 
-func SetupCheckAccount(rate time.Duration, dataChannel chan base.Data) {
-	task, err := taskScheduler.ScheduleAtFixedRate(func(ctx context.Context) {
+func SetupCheckAccount(rate time.Duration, delay time.Duration, dataChannel chan base.Data) {
+	task, err := taskScheduler.ScheduleWithFixedDelay(func(ctx context.Context) {
 		checkAccount(dataChannel)
-	}, rate)
+	}, rate, chrono.WithTime(time.Now().Add(delay)))
 	base.FatalIfError(err)
 
 	checkAccountTask = &task
