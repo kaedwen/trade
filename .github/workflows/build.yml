@@ -24,16 +24,18 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install --no-install-recommends dpkg-dev -y
 
-        VERSION="${GITHUB_REF##*/}"
         BUILD_BASE="/tmp/build"
+
+        git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(authorname) %(authoremail)  %(authordate:rfc2822)" > "${BUILD_BASE}/changelog"
+
+        VERSION="$(dpkg-parsechangelog --file "${BUILD_BASE}/changelog" --show-field VERSION)"
         BUILD_DIR="${BUILD_BASE}/trade-${VERSION}"
 
         echo "Latest version: $VERSION"
         mkdir -p "${BUILD_DIR}/debian"
 
-        git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(authorname) %(authoremail)  %(authordate:rfc2822)" > "${BUILD_DIR}/debian/changelog"
-
-        cp -r asset trade "${BUILD_DIR}"
+        mv "${BUILD_BASE}/changelog" "${BUILD_DIR}/debian/"
+        cp -r debian asset trade "${BUILD_DIR}"
 
         cd "${BUILD_DIR}"
 
