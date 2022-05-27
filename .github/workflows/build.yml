@@ -22,7 +22,7 @@ jobs:
 
     - name: Build debian package
       run: |
-        apt update && apt install --no-install-recommends dpkg-dev -y
+        sudo apt-get update && sudo apt-get install --no-install-recommends dpkg-dev -y
 
         VERSION="${GITHUB_REF##*/}"
         BUILD_BASE="/tmp/build"
