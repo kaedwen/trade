@@ -19,7 +19,19 @@ jobs:
         go-version: 1.18
 
     - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
+      run: go build -v -o trade -ldflags "-s -w" ./cmd/app/main.go
+    
+    - name: structure data
+      run: |
+        mkdir -p .debpkg/usr/bin
+        cp ./trade .debpkg/usr/bin/trade
+        chmod +x .debpkg/usr/bin/trade
+    - uses: jiro4989/build-deb-action@v2
+      with:
+        package: trade
+        package_root: .debpkg
+        maintainer: kaedwen
+        version: ${{ github.ref }} # refs/tags/v*.*.*
+        arch: 'amd64'
+        depends: 'libc6'
+        desc: 'Comdirect trade api package.'
