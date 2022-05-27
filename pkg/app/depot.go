@@ -83,7 +83,7 @@ type DepotDetailsResponse struct {
 
 func queryDepot() []string {
 
-	req, err := http.NewRequest("GET", base.Config.Url+"/brokerage/clients/user/v3/depots", nil)
+	req, err := http.NewRequest("GET", base.Config.Comdirect.Url+"/brokerage/clients/user/v3/depots", nil)
 	base.FatalIfError(err)
 
 	data, err := json.Marshal(base.RequestInfo)
@@ -131,7 +131,7 @@ func queryDepot() []string {
 
 func checkDepotDetails(depotID string, dataChannel chan base.Data) {
 
-	req, err := http.NewRequest("GET", base.Config.Url+"/brokerage/v3/depots/"+depotID+"/positions", nil)
+	req, err := http.NewRequest("GET", base.Config.Comdirect.Url+"/brokerage/v3/depots/"+depotID+"/positions", nil)
 	base.FatalIfError(err)
 
 	data, err := json.Marshal(base.RequestInfo)
@@ -178,6 +178,8 @@ func checkDepotDetails(depotID string, dataChannel chan base.Data) {
 func SetupCheckDepot(rate time.Duration, delay time.Duration, dataChannel chan base.Data) {
 	depotIDs := queryDepot()
 	task, err := taskScheduler.ScheduleWithFixedDelay(func(ctx context.Context) {
+		refreshMutex.Lock()
+		defer refreshMutex.Unlock()
 		checkDepotDetails(depotIDs[0], dataChannel)
 	}, rate, chrono.WithTime(time.Now().Add(delay)))
 	base.FatalIfError(err)

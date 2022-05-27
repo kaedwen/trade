@@ -55,13 +55,13 @@ func OAuthFirstFlow() {
 	base.Config.RequestID = currentTime[len(currentTime)-9:]
 
 	data := url.Values{}
-	data.Set("client_id", base.Config.ClientID)
-	data.Set("client_secret", base.Config.ClientSecret)
+	data.Set("client_id", base.Config.Comdirect.ClientID)
+	data.Set("client_secret", base.Config.Comdirect.ClientSecret)
 	data.Set("grant_type", "password")
-	data.Set("username", base.Config.Zugangsnummer)
-	data.Set("password", base.Config.Pin)
+	data.Set("username", base.Config.Comdirect.Zugangsnummer)
+	data.Set("password", base.Config.Comdirect.Pin)
 
-	req, err := http.NewRequest("POST", base.Config.OAuthUrl+"/oauth/token", strings.NewReader(data.Encode()))
+	req, err := http.NewRequest("POST", base.Config.Comdirect.OAuthUrl+"/oauth/token", strings.NewReader(data.Encode()))
 	base.FatalIfError(err)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -99,7 +99,7 @@ func OAuthFirstFlow() {
 
 func SessionStatus() {
 
-	req, err := http.NewRequest("GET", base.Config.Url+"/session/clients/user/v1/sessions", nil)
+	req, err := http.NewRequest("GET", base.Config.Comdirect.Url+"/session/clients/user/v1/sessions", nil)
 	base.FatalIfError(err)
 
 	base.RequestInfo.ClientRequestID = base.ClientRequestID{
@@ -153,7 +153,7 @@ func ValidateSessionTan() {
 	})
 	base.FatalIfError(err)
 
-	req, err := http.NewRequest("POST", base.Config.Url+"/session/clients/user/v1/sessions/"+base.Config.SessionUUID+"/validate", bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", base.Config.Comdirect.Url+"/session/clients/user/v1/sessions/"+base.Config.SessionUUID+"/validate", bytes.NewBuffer(data))
 	base.FatalIfError(err)
 
 	data, err = json.Marshal(base.RequestInfo)
@@ -209,7 +209,7 @@ func ActivateSessionTan() {
 	})
 	base.FatalIfError(err)
 
-	req, err := http.NewRequest("PATCH", base.Config.Url+"/session/clients/user/v1/sessions/"+base.Config.SessionUUID, bytes.NewBuffer(data))
+	req, err := http.NewRequest("PATCH", base.Config.Comdirect.Url+"/session/clients/user/v1/sessions/"+base.Config.SessionUUID, bytes.NewBuffer(data))
 	base.FatalIfError(err)
 
 	data, err = json.Marshal(base.RequestInfo)
@@ -255,12 +255,12 @@ func ActivateSessionTan() {
 func OAuthSecondaryFlow() {
 
 	data := url.Values{}
-	data.Set("client_id", base.Config.ClientID)
-	data.Set("client_secret", base.Config.ClientSecret)
+	data.Set("client_id", base.Config.Comdirect.ClientID)
+	data.Set("client_secret", base.Config.Comdirect.ClientSecret)
 	data.Set("grant_type", "cd_secondary")
 	data.Set("token", base.Config.AccessToken)
 
-	req, err := http.NewRequest("POST", base.Config.OAuthUrl+"/oauth/token", strings.NewReader(data.Encode()))
+	req, err := http.NewRequest("POST", base.Config.Comdirect.OAuthUrl+"/oauth/token", strings.NewReader(data.Encode()))
 	base.FatalIfError(err)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -298,12 +298,12 @@ func OAuthSecondaryFlow() {
 func RefreshToken() {
 
 	data := url.Values{}
-	data.Set("client_id", base.Config.ClientID)
-	data.Set("client_secret", base.Config.ClientSecret)
+	data.Set("client_id", base.Config.Comdirect.ClientID)
+	data.Set("client_secret", base.Config.Comdirect.ClientSecret)
 	data.Set("grant_type", "refresh_token")
 	data.Set("refresh_token", base.Config.RefreshToken)
 
-	req, err := http.NewRequest("POST", base.Config.OAuthUrl+"/oauth/token", strings.NewReader(data.Encode()))
+	req, err := http.NewRequest("POST", base.Config.Comdirect.OAuthUrl+"/oauth/token", strings.NewReader(data.Encode()))
 	base.FatalIfError(err)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -340,6 +340,8 @@ func RefreshToken() {
 
 func SetupRefreshToken(rate time.Duration, delay time.Duration) {
 	task, err := taskScheduler.ScheduleAtFixedRate(func(ctx context.Context) {
+		refreshMutex.Lock()
+		defer refreshMutex.Unlock()
 		RefreshToken()
 	}, rate, chrono.WithTime(time.Now().Add(delay)))
 	base.FatalIfError(err)

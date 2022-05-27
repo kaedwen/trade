@@ -1,0 +1,10 @@
+[Unit]
+Description=Comdirect Trade Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/trade
+
+[Install]
+WantedBy=multi-user.target

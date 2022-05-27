@@ -1,0 +1,5 @@
+#!/usr/bin/make -f
+PKGDIR=debian/tmp
+
+%:
+	dh $@ --with systemd

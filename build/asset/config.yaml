@@ -1,0 +1,11 @@
+comdirect:
+  log_level: "debug"
+  client_id: "Fill your comdirect api `client_id` here"
+  client_secret: "Fill your comdirect api `client_secret` here"
+  zugangsnummer: "Fill your comdirect `zugangsnummer` here"
+  pin: "Fill your comdirect `pin` here"
+influx:
+  url: "http://example.com:8086"
+  token: "xxx"
+  org: "your ORG"
+  bucket: "you bucket"

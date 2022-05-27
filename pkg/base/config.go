@@ -15,14 +15,16 @@ type ClientRequestID struct {
 }
 
 type ConfigStatic struct {
-	LogLevel      string `yaml:"log_level" default:"info"`
-	ClientID      string `yaml:"client_id"`
-	ClientSecret  string `yaml:"client_secret"`
-	Zugangsnummer string `yaml:"zugangsnummer"`
-	Pin           string `yaml:"pin"`
-	Url           string `yaml:"url"`
-	OAuthUrl      string `yaml:"oauth_url"`
-	Influx        struct {
+	LogLevel  string `yaml:"log_level" default:"info"`
+	Comdirect struct {
+		ClientID      string `yaml:"client_id"`
+		ClientSecret  string `yaml:"client_secret"`
+		Zugangsnummer string `yaml:"zugangsnummer"`
+		Pin           string `yaml:"pin"`
+		Url           string `yaml:"url"`
+		OAuthUrl      string `yaml:"oauth_url"`
+	} `yaml:"comdirect"`
+	Influx struct {
 		Url    string `yaml:"url"`
 		Token  string `yaml:"token"`
 		Org    string `yaml:"org"`
@@ -31,19 +33,13 @@ type ConfigStatic struct {
 }
 
 type ConfigRuntime struct {
-	ConfigStatic          `yaml:",inline"`
-	SessionID             string `yaml:"session_id"`
-	RequestID             string `yaml:"request_id"`
-	AccessToken           string `yaml:"access_token"`
-	RefreshToken          string `yaml:"refresh_token"`
-	SessionUUID           string `yaml:"sessionUUID"`
-	ChallengeID           string `yaml:"challenge_id"`
-	Tan                   string `yaml:"tan"`
-	AccountUUID           string `yaml:"accountUUID"`
-	DepotUUID             string `yaml:"depotUUID"`
-	SettlementAccountUUID string `yaml:"settlementAccountUUID"`
-	PostionUUID           string `yaml:"positionUUID"`
-	DocumentUUID          string `yaml:"documentUUID"`
+	ConfigStatic `yaml:",inline"`
+	SessionID    string
+	RequestID    string
+	AccessToken  string
+	RefreshToken string
+	SessionUUID  string
+	ChallengeID  string
 }
 
 var Config ConfigRuntime
@@ -106,8 +102,8 @@ func isConfigHomePresent() (string, error) {
 func loadConfig(path string) {
 	// set defaults
 	Config.LogLevel = "debug"
-	Config.Url = "https://api.comdirect.de/api"
-	Config.OAuthUrl = "https://api.comdirect.de"
+	Config.Comdirect.Url = "https://api.comdirect.de/api"
+	Config.Comdirect.OAuthUrl = "https://api.comdirect.de"
 
 	configBytes, err := os.ReadFile(path)
 	FatalIfError(err)

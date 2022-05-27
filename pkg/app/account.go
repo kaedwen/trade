@@ -57,7 +57,7 @@ type AccountBalanceResponse struct {
 
 func checkAccount(dataChannel chan base.Data) {
 
-	req, err := http.NewRequest("GET", base.Config.Url+"/banking/clients/user/v2/accounts/balances", nil)
+	req, err := http.NewRequest("GET", base.Config.Comdirect.Url+"/banking/clients/user/v2/accounts/balances", nil)
 	base.FatalIfError(err)
 
 	data, err := json.Marshal(base.RequestInfo)
@@ -103,6 +103,8 @@ func checkAccount(dataChannel chan base.Data) {
 
 func SetupCheckAccount(rate time.Duration, delay time.Duration, dataChannel chan base.Data) {
 	task, err := taskScheduler.ScheduleWithFixedDelay(func(ctx context.Context) {
+		refreshMutex.Lock()
+		defer refreshMutex.Unlock()
 		checkAccount(dataChannel)
 	}, rate, chrono.WithTime(time.Now().Add(delay)))
 	base.FatalIfError(err)

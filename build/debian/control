@@ -1,0 +1,8 @@
+Source: trade
+Section: misc
+Priority: optional
+Maintainer: Keadwen <postmaster@kaedwen.org>
+
+Package: trade
+Architecture: amd64
+Description: Comdirect Trade App

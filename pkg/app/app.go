@@ -1,6 +1,7 @@
 package app
 
 import (
+	"sync"
 	"time"
 
 	"github.com/kaedwen/trade/pkg/base"
@@ -9,6 +10,7 @@ import (
 )
 
 var taskScheduler = chrono.NewDefaultTaskScheduler()
+var refreshMutex sync.Mutex
 
 func Run() {
 	base.Setup()
