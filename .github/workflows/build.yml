@@ -7,7 +7,6 @@ on:
     branches: [ main ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -20,15 +19,26 @@ jobs:
 
     - name: Build
       run: go build -v -o trade -ldflags "-s -w" ./cmd/app/main.go
-    
-    - name: structure data
-      run: |
-        mkdir -p .debpkg/usr/bin
-        cp ./trade .debpkg/usr/bin/trade
-        chmod +x .debpkg/usr/bin/trade
+
     - name: Build debian package
-      uses: albeego/deb-builder-action@master
-      with:
-        execution_path: build
-        package_name: trade
-        target_architecture: amd64
+      run: |
+        apt update && apt install --no-install-recommends dpkg-dev -y
+
+        VERSION="${GITHUB_REF##*/}"
+        BUILD_BASE="/tmp/build"
+        BUILD_DIR="${BUILD_BASE}/trade-${VERSION}"
+
+        echo "Latest version: $VERSION"
+        mkdir -p "${BUILD_DIR}/debian"
+
+        git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(authorname) %(authoremail)  %(authordate:rfc2822)" > "${BUILD_DIR}/debian/changelog"
+
+        cp -r asset trade "${BUILD_DIR}"
+
+        cd "${BUILD_DIR}"
+
+        dpkg-buildpackage
+
+        cd -
+
+        cp "${BUILD_BASE}/"*.deb .
