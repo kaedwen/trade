@@ -15,6 +15,7 @@ var refreshMutex sync.Mutex
 func Run() {
 	base.Setup()
 
+	quoteChannel := make(chan base.Quote)
 	dataChannel := make(chan base.Data)
 
 	OAuthFirstFlow()
@@ -34,6 +35,9 @@ func Run() {
 	SetupRefreshToken(5*time.Minute, 30*time.Second)
 	SetupCheckAccount(1*time.Minute, 20*time.Second, dataChannel)
 	SetupCheckDepot(1*time.Minute, 10*time.Second, dataChannel)
+
+	// setup alpha vantage api
+	SetupCheckQuote(1*time.Minute, 10*time.Second, quoteChannel)
 
 	// block
 	signal := make(chan struct{})

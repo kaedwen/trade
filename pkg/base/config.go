@@ -14,22 +14,32 @@ type ClientRequestID struct {
 	RequestID string `json:"requestId"`
 }
 
+type ConfigComdirect struct {
+	ClientID      string `yaml:"client_id"`
+	ClientSecret  string `yaml:"client_secret"`
+	Zugangsnummer string `yaml:"zugangsnummer"`
+	Pin           string `yaml:"pin"`
+	Url           string `yaml:"url"`
+	OAuthUrl      string `yaml:"oauth_url"`
+}
+
+type ConfigAlphaVantage struct {
+	ApiKey string `yaml:"api_key"`
+}
+
+type ConfigInflux struct {
+	Url    string `yaml:"url"`
+	Token  string `yaml:"token"`
+	Org    string `yaml:"org"`
+	Bucket string `yaml:"bucket"`
+}
+
 type ConfigStatic struct {
-	LogLevel  string `yaml:"log_level" default:"info"`
-	Comdirect struct {
-		ClientID      string `yaml:"client_id"`
-		ClientSecret  string `yaml:"client_secret"`
-		Zugangsnummer string `yaml:"zugangsnummer"`
-		Pin           string `yaml:"pin"`
-		Url           string `yaml:"url"`
-		OAuthUrl      string `yaml:"oauth_url"`
-	} `yaml:"comdirect"`
-	Influx struct {
-		Url    string `yaml:"url"`
-		Token  string `yaml:"token"`
-		Org    string `yaml:"org"`
-		Bucket string `yaml:"bucket"`
-	} `yaml:"influx"`
+	LogLevel     string             `yaml:"log_level" default:"info"`
+	Comdirect    ConfigComdirect    `yaml:"comdirect"`
+	AlphaVantage ConfigAlphaVantage `yaml:"alpha_vantage"`
+	Influx       ConfigInflux       `yaml:"influx"`
+	Targets      []string           `yaml:"targets"`
 }
 
 type ConfigRuntime struct {

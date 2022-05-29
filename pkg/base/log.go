@@ -36,6 +36,6 @@ func setupLogger() {
 
 func FatalIfError(err error) {
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("error occured")
 	}
 }

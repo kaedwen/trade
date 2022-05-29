@@ -5,6 +5,13 @@ go 1.18
 require github.com/rs/zerolog v1.26.1
 
 require (
+	github.com/golang/protobuf v1.4.2 // indirect
+	golang.org/x/oauth2 v0.0.0-20210218202405-ba52d332ba99 // indirect
+	google.golang.org/appengine v1.6.6 // indirect
+	google.golang.org/protobuf v1.25.0 // indirect
+)
+
+require (
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/godbus/dbus/v5 v5.0.4 // indirect
@@ -12,6 +19,7 @@ require (
 	github.com/influxdata/influxdb-client-go v1.4.0
 	github.com/influxdata/influxdb-client-go/v2 v2.9.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
+	github.com/kaedwen/go-alpha-vantage v0.0.0-20220529161323-2b778dcc7993
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/procyon-projects/chrono v1.1.0 // indirect
 	github.com/rs/xid v1.3.0 // indirect

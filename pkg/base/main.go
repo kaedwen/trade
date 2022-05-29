@@ -8,6 +8,9 @@ func Setup() {
 	// setup logger
 	setupLogger()
 
+	// setup finnhub
+	setupAlpha()
+
 	// setup Influx connection
 	setupInflux()
 }
