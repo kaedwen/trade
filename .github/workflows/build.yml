@@ -36,7 +36,7 @@ jobs:
         echo "Latest version: $VERSION"
 
         mv "${BUILD_BASE}/changelog" "${BUILD_DIR}/debian/"
-        cp -r debian asset trade "${BUILD_DIR}"
+        cp -r debian assets trade "${BUILD_DIR}"
 
         cd "${BUILD_DIR}"
 
