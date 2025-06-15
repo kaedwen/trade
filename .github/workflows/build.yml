@@ -25,24 +25,14 @@ jobs:
 
     - name: Build debian package
       run: |
-        echo "test"
-        
-        echo "test2"
         sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends dpkg-dev dh-make -y
-        echo "test3"
 
         BUILD_BASE="$(pwd)/build"
         mkdir -p "${BUILD_BASE}"
 
-        echo "test4"
-
         git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(*authorname) %(*authoremail)  %(*authordate:rfc2822)" > "${BUILD_BASE}/changelog"
 
-        echo "test5"
-
         echo "test 55 \n$(cat ${BUILD_BASE}/changelog)"
-
-        echo "test6"
 
         VERSION="$(dpkg-parsechangelog --file "${BUILD_BASE}/changelog" --show-field VERSION)"
         # BUILD_DIR="${BUILD_BASE}/trade-${VERSION}"
