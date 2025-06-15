@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     container: "ubuntu:latest"
     steps:
+    - name: Install git
+      run: apt-get update && apt-get -y install git
+
     - uses: actions/checkout@v4
-      with:
-        path: /tmp/data
 
     - name: Set up Go
       uses: actions/setup-go@v5

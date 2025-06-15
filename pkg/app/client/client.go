@@ -135,7 +135,10 @@ func (c *client) OAuthSecondFlow(ctx context.Context) (context.Context, error) {
 		AccessToken:  oauthSecondaryFlowResponse.AccessToken,
 		RefreshToken: oauthSecondaryFlowResponse.RefreshToken,
 		ExpiresIn:    oauthSecondaryFlowResponse.ExpiresIn,
+		Expiry:       time.Now().Add(time.Duration(oauthSecondaryFlowResponse.ExpiresIn * int64(time.Second))),
 	}
+
+	log.Printf("token expires at %v\n", stk.Expiry)
 
 	c.tks = c.oac.TokenSource(ctx, stk)
 	c.Client = &http.Client{Transport: &jsonTransport{oauth2.NewClient(ctx, c.tks).Transport}}

@@ -82,7 +82,7 @@ func (a *Application) fetchAccount(ctx context.Context) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Println(utils.ReadAllString(resp.Body))
+		log.Println(resp.StatusCode, utils.ReadAllString(resp.Body))
 		return api_error.ErrApiBadStatus
 	}
 
