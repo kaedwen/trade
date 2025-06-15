@@ -2,7 +2,7 @@ name: Go
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, test ]
   pull_request:
     branches: [ main ]
 
@@ -33,7 +33,9 @@ jobs:
       run: |
         echo "test"
         
-        # apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends dpkg-dev dh-make -y
+        echo "test2"
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends dpkg-dev dh-make -y
+        echo "test3"
 
         # BUILD_BASE="$(pwd)/build"
         # mkdir -p "${BUILD_BASE}"
