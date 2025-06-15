@@ -26,6 +26,7 @@ jobs:
     - name: Build debian package
       run: |
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends git dpkg-dev dh-make -y
+        git config --global --add safe.directory $PWD
 
         BUILD_BASE="/tmp/build"
         mkdir -p "${BUILD_BASE}"
