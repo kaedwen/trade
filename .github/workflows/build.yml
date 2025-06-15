@@ -12,7 +12,9 @@ jobs:
     container: "ubuntu:latest"
     steps:
     - name: Install git
-      run: apt-get update && apt-get -y install git
+      run: |
+        apt-get update && apt-get -y install git
+        git config --global --add safe.directory $(pwd)
 
     - uses: actions/checkout@v4
 
