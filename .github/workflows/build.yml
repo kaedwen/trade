@@ -9,20 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: "ubuntu:latest"
     steps:
-    - name: Install git
-      run: |
-        apt-get update && apt-get -y install git
-
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         fetch-tags: true
-
-    - name: Configure git
-      run: |
-        git config --global --add safe.directory "$(pwd)"
 
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -37,7 +28,7 @@ jobs:
         echo "test"
         
         echo "test2"
-        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends dpkg-dev dh-make -y
+        sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends dpkg-dev dh-make -y
         echo "test3"
 
         BUILD_BASE="$(pwd)/build"
