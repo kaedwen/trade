@@ -33,26 +33,26 @@ jobs:
       run: |
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends dpkg-dev dh-make -y
 
-        BUILD_BASE="$(pwd)/build"
-        mkdir -p "${BUILD_BASE}"
+        # BUILD_BASE="$(pwd)/build"
+        # mkdir -p "${BUILD_BASE}"
 
-        git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(*authorname) %(*authoremail)  %(*authordate:rfc2822)" > "${BUILD_BASE}/changelog"
+        # git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(*authorname) %(*authoremail)  %(*authordate:rfc2822)" > "${BUILD_BASE}/changelog"
 
-        cat "${BUILD_BASE}/changelog"
+        # cat "${BUILD_BASE}/changelog"
 
-        VERSION="$(dpkg-parsechangelog --file "${BUILD_BASE}/changelog" --show-field VERSION)"
-        BUILD_DIR="${BUILD_BASE}/trade-${VERSION}"
-        mkdir -p "${BUILD_DIR}/debian"
+        # VERSION="$(dpkg-parsechangelog --file "${BUILD_BASE}/changelog" --show-field VERSION)"
+        # BUILD_DIR="${BUILD_BASE}/trade-${VERSION}"
+        # mkdir -p "${BUILD_DIR}/debian"
 
-        echo "Latest version: $VERSION"
+        # echo "Latest version: $VERSION"
 
-        mv "${BUILD_BASE}/changelog" "${BUILD_DIR}/debian/"
-        cp -r debian assets trade "${BUILD_DIR}"
+        # mv "${BUILD_BASE}/changelog" "${BUILD_DIR}/debian/"
+        # cp -r debian assets trade "${BUILD_DIR}"
 
-        cd "${BUILD_DIR}"
+        # cd "${BUILD_DIR}"
 
-        dpkg-buildpackage
+        # dpkg-buildpackage
 
-        cd -
+        # cd -
 
-        cp "${BUILD_BASE}/"*.deb .
+        # cp "${BUILD_BASE}/"*.deb .
