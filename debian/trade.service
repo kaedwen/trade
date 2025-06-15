@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/trade
+ExecStart=/usr/bin/trade
 
 [Install]
 WantedBy=multi-user.target

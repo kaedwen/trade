@@ -1,0 +1,6 @@
+apiAddress: "https://api.comdirect.de/api"
+tokenAddress: "https://api.comdirect.de"
+clientId: <fill in your client id>
+clientSecret: <fill in your client secret>
+accountId: :fill in your account id>
+pin: <fill in your account pin>

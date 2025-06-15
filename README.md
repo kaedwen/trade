@@ -1,10 +1,10 @@
 # Comdirect Trade App
 
-This app connects to the comdirect api to query your contract with the give credentials. Pulling the current account balances, depot values and pushing them to the configured influx ORG/Bucket.
+This app connects to the comdirect api to query your contract with the give credentials. Pulling the current account balances, depot values.
 
 ## Config
 Configuration is looked up in the following manner
-* .config.yaml from `cwd` up to /
+* .config.yaml next to bonary
 * `$HOME`/.config/trade/config.yaml
 * /etc/trade/config.yaml
 

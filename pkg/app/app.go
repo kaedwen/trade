@@ -1,46 +1,99 @@
 package app
 
 import (
-	"sync"
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
 	"time"
 
-	"github.com/kaedwen/trade/pkg/base"
-	"github.com/procyon-projects/chrono"
-	"github.com/rs/zerolog/log"
+	"github.com/kaedwen/trade/pkg/app/client"
+	api_error "github.com/kaedwen/trade/pkg/app/error"
+	"github.com/kaedwen/trade/pkg/app/session"
+	"github.com/kaedwen/trade/pkg/app/utils"
+	"github.com/kaedwen/trade/pkg/config"
+	"github.com/kaedwen/trade/pkg/model"
 )
 
-var taskScheduler = chrono.NewDefaultTaskScheduler()
-var refreshMutex sync.Mutex
+const (
+	ApiAccountPath = "/banking/clients/user/v2/accounts/balances"
+)
 
-func Run() {
-	base.Setup()
+type Application struct {
+	session.Session
+	cfg *config.Config
+}
 
-	quoteChannel := make(chan base.Quote)
-	dataChannel := make(chan base.Data)
+func NewApplication() (*Application, error) {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config - %w", err)
+	}
 
-	OAuthFirstFlow()
-	SessionStatus()
-	ValidateSessionTan()
+	return &Application{session.NewSession(cfg), cfg}, nil
+}
 
-	log.Info().Msg("Wait 30s for TAN Challenge ...")
-	time.Sleep(30 * time.Second)
+func (a *Application) Run(ctx context.Context) error {
+	ctx, err := client.NewClient(a.cfg).Connect(ctx)
+	if err != nil {
+		return err
+	}
 
-	ActivateSessionTan()
-	OAuthSecondaryFlow()
+	if err := a.Init(ctx); err != nil {
+		return err
+	}
 
-	// start influx writer
-	go base.RunInflux(dataChannel)
+	ctx, err = client.FromContext(ctx).OAuthSecondFlow(ctx)
+	if err != nil {
+		return err
+	}
 
-	log.Info().Msg("RUN ...")
-	SetupRefreshToken(5*time.Minute, 30*time.Second)
-	SetupCheckAccount(1*time.Minute, 20*time.Second, dataChannel)
-	SetupCheckDepot(1*time.Minute, 10*time.Second, dataChannel)
+	t := time.NewTicker(time.Minute)
 
-	// setup alpha vantage api
-	SetupCheckQuote(1*time.Minute, 10*time.Second, quoteChannel)
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-t.C:
+			cctx, cancel := context.WithTimeout(ctx, time.Minute)
+			defer cancel()
 
-	// block
-	signal := make(chan struct{})
-	<-signal
+			if err := a.fetchAccount(cctx); err != nil {
+				log.Println("failed to fetch account - %w", err)
+			}
+		}
+	}
+}
 
+func (a *Application) fetchAccount(ctx context.Context) error {
+	log.Println("running account fetch")
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, a.cfg.ApiAddress.JoinPath(ApiAccountPath).String(), http.NoBody)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("x-http-request-info", a.NewRequestInfo())
+
+	resp, err := client.FromContext(ctx).Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Println(utils.ReadAllString(resp.Body))
+		return api_error.ErrApiBadStatus
+	}
+
+	var data model.AccountBalanceResponse
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return err
+	}
+
+	for _, v := range data.Values {
+		log.Println(v.AccountID, v.BalanceEUR, v.AvailableCashAmountEUR)
+	}
+
+	return nil
 }
