@@ -27,7 +27,7 @@ jobs:
         BUILD_BASE="/tmp/build"
         mkdir -p "${BUILD_BASE}"
 
-        git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(authorname) %(authoremail)  %(authordate:rfc2822)" > "${BUILD_BASE}/changelog"
+        git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(*authorname) %(*authoremail)  %(*authordate:rfc2822)" > "${BUILD_BASE}/changelog"
 
         VERSION="$(dpkg-parsechangelog --file "${BUILD_BASE}/changelog" --show-field VERSION)"
         BUILD_DIR="${BUILD_BASE}/trade-${VERSION}"
