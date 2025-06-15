@@ -26,7 +26,6 @@ jobs:
 
     - name: Build debian package
       run: |
-        cd /tmp/data
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends git dpkg-dev dh-make -y
 
         BUILD_BASE="/tmp/build"
