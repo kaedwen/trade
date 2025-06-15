@@ -9,12 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: "ubuntu:latest"
+    # container: "ubuntu:latest"
     steps:
-    - name: Install git
-      run: |
-        apt-get update && apt-get -y install git
-        git config --global --add safe.directory $(pwd)
+    # - name: Install git
+    #   run: |
+    #     apt-get update && apt-get -y install git
+    #     git config --global --add safe.directory $(pwd)
 
     - uses: actions/checkout@v4
 
@@ -30,7 +30,7 @@ jobs:
       run: |
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends git dpkg-dev dh-make -y
 
-        BUILD_BASE="/tmp/build"
+        BUILD_BASE="$(pwd)/build"
         mkdir -p "${BUILD_BASE}"
 
         git tag --list "*.*.*" --sort=-authordate --sort=-v:refname --format "trade (%(refname:lstrip=-1)) UNRELEASED; urgency=medium%0a%0a  * %(subject)%0a%0a -- %(*authorname) %(*authoremail)  %(*authordate:rfc2822)" > "${BUILD_BASE}/changelog"
