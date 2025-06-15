@@ -23,7 +23,11 @@ jobs:
 
     - name: Build debian package
       run: |
+        pwd
+
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends git dpkg-dev dh-make -y
+
+        pwd
 
         BUILD_BASE="/tmp/build"
         mkdir -p "${BUILD_BASE}"
