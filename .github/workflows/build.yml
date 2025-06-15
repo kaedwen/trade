@@ -16,6 +16,8 @@ jobs:
         apt-get update && apt-get -y install git
 
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Configure git
       run: |
