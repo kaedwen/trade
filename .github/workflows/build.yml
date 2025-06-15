@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: "ubuntu:latest"
     steps:
     - uses: actions/checkout@v4
 
@@ -22,7 +23,7 @@ jobs:
 
     - name: Build debian package
       run: |
-        sudo apt-get update && sudo apt-get install --no-install-recommends dpkg-dev -y
+        sudo apt-get update && sudo apt-get install --no-install-recommends git dpkg-dev dh-make -y
 
         BUILD_BASE="/tmp/build"
         mkdir -p "${BUILD_BASE}"
