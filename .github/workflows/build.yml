@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        path: /tmp/data
 
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -25,8 +25,8 @@ jobs:
 
     - name: Build debian package
       run: |
+        cd /tmp/data
         apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends git dpkg-dev dh-make -y
-        git config --global --add safe.directory $PWD
 
         BUILD_BASE="/tmp/build"
         mkdir -p "${BUILD_BASE}"
